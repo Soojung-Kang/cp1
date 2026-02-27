@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testsprite MCP - 테스트 결과</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      padding: 40px 20px;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 {
+      font-size: 28px;
+      color: #58a6ff;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: #8b949e;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .test-suite {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .suite-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #30363d;
+      font-weight: 600;
+      font-size: 16px;
+      color: #f0f6fc;
+    }
+    .test-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid #21262d;
+      font-size: 14px;
+    }
+    .test-item:last-child { border-bottom: none; }
+    .status {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .pass { background: #238636; color: #fff; }
+    .fail { background: #da3633; color: #fff; }
+    .test-name { flex: 1; }
+    .test-time { color: #8b949e; font-size: 12px; }
+    .summary {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      gap: 32px;
+      margin-top: 24px;
+    }
+    .summary-item { text-align: center; }
+    .summary-value { font-size: 32px; font-weight: 700; }
+    .summary-label { font-size: 12px; color: #8b949e; margin-top: 4px; }
+    .green { color: #3fb950; }
+    .red { color: #f85149; }
+    .blue { color: #58a6ff; }
+    #progress {
+      width: 100%;
+      height: 6px;
+      background: #21262d;
+      border-radius: 3px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #238636, #3fb950);
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Testsprite MCP Test Suite</h1>
+    <p class="subtitle">프로젝트 HTML 페이지 검증 테스트</p>
+    <div id="progress"><div id="progress-bar"></div></div>
+    <div id="results"></div>
+    <div class="summary" id="summary" style="display:none;">
+      <div class="summary-item">
+        <div class="summary-value blue" id="totalCount">0</div>
+        <div class="summary-label">Total</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value green" id="passCount">0</div>
+        <div class="summary-label">Passed</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value red" id="failCount">0</div>
+        <div class="summary-label">Failed</div>
+      </div>
+      <div class="summary-item">
+        <div class="summary-value blue" id="duration">0ms</div>
+        <div class="summary-label">Duration</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const testSuites = [
+      {
+        name: 'index.html - 디지털 시계',
+        tests: [
+          {
+            name: 'HTML 구조: DOCTYPE 선언 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              console.assert(text.includes('<!DOCTYPE html>'), 'DOCTYPE missing');
+              return text.includes('<!DOCTYPE html>');
+            }
+          },
+          {
+            name: 'HTML 구조: lang="ko" 설정',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('lang="ko"');
+            }
+          },
+          {
+            name: 'HTML 구조: 메타 charset UTF-8',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('charset="UTF-8"');
+            }
+          },
+          {
+            name: 'HTML 구조: viewport 메타태그 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('name="viewport"');
+            }
+          },
+          {
+            name: 'DOM 요소: #time 엘리먼트 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('id="time"');
+            }
+          },
+          {
+            name: 'DOM 요소: #date 엘리먼트 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('id="date"');
+            }
+          },
+          {
+            name: 'DOM 요소: #day 엘리먼트 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('id="day"');
+            }
+          },
+          {
+            name: 'JavaScript: updateClock 함수 정의',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('function updateClock()');
+            }
+          },
+          {
+            name: 'JavaScript: setInterval로 1초 간격 업데이트',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('setInterval(updateClock, 1000)');
+            }
+          },
+          {
+            name: 'JavaScript: 요일 배열 7일 포함',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+              return days.every(d => text.includes(d));
+            }
+          },
+          {
+            name: 'CSS: 반응형 미디어 쿼리 (600px)',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('@media (max-width: 600px)');
+            }
+          },
+          {
+            name: 'CSS: 콜론 깜빡임 애니메이션 존재',
+            fn: async () => {
+              const res = await fetch('index.html');
+              const text = await res.text();
+              return text.includes('@keyframes blink');
+            }
+          }
+        ]
+      },
+      {
+        name: 'login.html - 로그인 페이지',
+        tests: [
+          {
+            name: 'HTML 구조: DOCTYPE 선언 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('<!DOCTYPE html>');
+            }
+          },
+          {
+            name: 'HTML 구조: lang="ko" 설정',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('lang="ko"');
+            }
+          },
+          {
+            name: '폼 요소: 이메일 input[type="email"] 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('type="email"');
+            }
+          },
+          {
+            name: '폼 요소: 비밀번호 input[type="password"] 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('type="password"');
+            }
+          },
+          {
+            name: '폼 요소: 로그인 버튼 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('btn-login') && text.includes('type="submit"');
+            }
+          },
+          {
+            name: '폼 요소: required 속성 설정',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              const matches = text.match(/required/g);
+              return matches && matches.length >= 2;
+            }
+          },
+          {
+            name: 'JavaScript: handleLogin 함수 정의',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('function handleLogin');
+            }
+          },
+          {
+            name: 'JavaScript: 비밀번호 길이 검증 (6자 이상)',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('password.length < 6');
+            }
+          },
+          {
+            name: 'UI: 에러 메시지 영역 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('error-message') && text.includes('id="errorMsg"');
+            }
+          },
+          {
+            name: 'UI: 소셜 로그인 버튼 3개 (Google, Apple, GitHub)',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('title="Google"') &&
+                     text.includes('title="Apple"') &&
+                     text.includes('title="GitHub"');
+            }
+          },
+          {
+            name: 'UI: 회원가입 링크 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('회원가입');
+            }
+          },
+          {
+            name: 'UI: 비밀번호 찾기 링크 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('비밀번호 찾기');
+            }
+          },
+          {
+            name: 'UI: 로그인 유지 체크박스 존재',
+            fn: async () => {
+              const res = await fetch('login.html');
+              const text = await res.text();
+              return text.includes('로그인 유지') && text.includes('type="checkbox"');
+            }
+          }
+        ]
+      }
+    ];
+
+    async function runTests() {
+      const resultsEl = document.getElementById('results');
+      const progressBar = document.getElementById('progress-bar');
+      let total = 0, passed = 0, failed = 0;
+      const startTime = performance.now();
+
+      const allTests = testSuites.reduce((sum, s) => sum + s.tests.length, 0);
+      let completed = 0;
+
+      for (const suite of testSuites) {
+        const suiteEl = document.createElement('div');
+        suiteEl.className = 'test-suite';
+        suiteEl.innerHTML = `<div class="suite-header">${suite.name}</div>`;
+        resultsEl.appendChild(suiteEl);
+
+        for (const test of suite.tests) {
+          total++;
+          const testStart = performance.now();
+          let success = false;
+
+          try {
+            success = await test.fn();
+          } catch (e) {
+            success = false;
+          }
+
+          const testDuration = Math.round(performance.now() - testStart);
+          if (success) passed++; else failed++;
+          completed++;
+
+          progressBar.style.width = `${(completed / allTests) * 100}%`;
+          if (failed > 0) {
+            progressBar.style.background = 'linear-gradient(90deg, #da3633, #f85149)';
+          }
+
+          const itemEl = document.createElement('div');
+          itemEl.className = 'test-item';
+          itemEl.innerHTML = `
+            <div class="status ${success ? 'pass' : 'fail'}">${success ? '✓' : '✗'}</div>
+            <div class="test-name">${test.name}</div>
+            <div class="test-time">${testDuration}ms</div>
+          `;
+          suiteEl.appendChild(itemEl);
+        }
+      }
+
+      const duration = Math.round(performance.now() - startTime);
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('passCount').textContent = passed;
+      document.getElementById('failCount').textContent = failed;
+      document.getElementById('duration').textContent = `${duration}ms`;
+      document.getElementById('summary').style.display = 'flex';
+
+      console.log(`\nTestsprite MCP Test Results:`);
+      console.log(`Total: ${total} | Passed: ${passed} | Failed: ${failed} | Duration: ${duration}ms`);
+    }
+
+    runTests();
+  </script>
+</body>
+</html>
